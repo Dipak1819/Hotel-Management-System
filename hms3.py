@@ -21,9 +21,8 @@ def main():
         choice=int(input("enter your choice: "))
         if choice==1:
             room_num=int(input("enter the room number you want to add: "))
-            rtype=input('enter the type of the room: ')
-            price=int(input('enter the price of the room: '))
-            hm.add_rooms(room_num,rtype,price)
+            rtype=input('enter the type of the room (standard/deluxe/suite):  ')
+            hm.add_rooms(room_num,rtype)
         elif choice==2:
             hm.list_rooms()
         elif choice==3:
@@ -31,7 +30,7 @@ def main():
             gname=input('enter hte guest name who want to book the room: \n')
             hm.book_rooms(num,gname)
         elif choice==4:
-            num2=int(input('enter the room number you want to book: \n'))
+            num2=int(input('enter the room number you want to check out: \n'))
             hm.check_out(num2)
         elif choice==5: 
             flag=False

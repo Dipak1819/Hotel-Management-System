@@ -1,16 +1,22 @@
-from rooms import Rooms
+from rooms import StandardRoom,DeluxeRoom,SuiteRoom
 
 class Hotel:
     def __init__(self,name):
         self.name=name
         self.rooms={}
 
-    def add_rooms(self,room_number,type,price):
+    def add_rooms(self,room_number,type):
         if room_number in self.rooms:
             print("rooms is already added")
         else:
-            self.rooms[room_number]= Rooms(room_number,type,price)
-            print("room added successfully")
+            if type.lower()=='standard':
+                self.rooms[room_number]=StandardRoom(room_number)
+            elif type.lower()=='deluxe':
+                self.rooms[room_number]=DeluxeRoom(room_number)
+            else:
+                self.rooms[room_number]=SuiteRoom(room_number)
+            
+        print("room added successfully")
 
     def book_rooms(self,room_number,username):
         if room_number in self.rooms:
@@ -25,8 +31,8 @@ class Hotel:
 
     def check_out(self,room_number):
         if room_number in self.rooms:
-            if self.rooms[room_number].booked==True:
-                self.rooms[room_number].booked=False
+            if self.rooms[room_number].isbooked==True:
+                self.rooms[room_number].isbooked=False
                 self.rooms[room_number].guest_name=None
                 print("room checked out successfully")
             else:
@@ -38,6 +44,5 @@ class Hotel:
         if self.rooms:
             for i in self.rooms:
                 print(self.rooms[i].get_room_info())
-                print('/n')
         else:
             print('no room to show')

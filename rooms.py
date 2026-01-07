@@ -7,5 +7,35 @@ class Rooms:
         self.guest_name=None
 
     def get_room_info(self):
-        return f'Room {self.number} if of type {self.type} and its price is {self.price}'
+        status = "BOOKED" if self.isbooked else "AVAILABLE"
+        guest = self.guest_name if self.guest_name else "None"
+        return (
+            f"Room {self.number}\n"
+            f"  Type:   {self.type}\n"
+            f"  Price:  {self.price}\n"
+            f"  Status: {status}\n"
+            f"  Guest:  {guest}"
+        )
+
+class StandardRoom(Rooms):
+    def __init__(self, number):
+        super().__init__(number,"Standard",300)
+        self.hasbalcony='Yes'
+        self.haslounge='No'
+        self.hasbar='No'
+
+class DeluxeRoom(Rooms):
+    def __init__(self, number):
+        super().__init__(number, "Deluxe",500)
+        self.hasbalcony='Yes'
+        self.haslounge='Yes'
+        self.hasbar='No'
+
+class SuiteRoom(Rooms):
+    def __init__(self,number):
+        super().__init__(number,'Suite',700)
+        self.hasbalcony='Yes'
+        self.haslounge='Yes'
+        self.hasbar='Yes'
+
     
