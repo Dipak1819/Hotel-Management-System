@@ -1,5 +1,5 @@
 from rooms import StandardRoom,DeluxeRoom,SuiteRoom
-
+from payment import Payment
 class Hotel:
     def __init__(self,name):
         self.name=name
@@ -21,9 +21,16 @@ class Hotel:
     def book_rooms(self,room_number,username):
         if room_number in self.rooms:
             if self.rooms[room_number].isbooked==False: 
-                self.rooms[room_number].number=room_number
-                self.rooms[room_number].isbooked=True
-                self.rooms[room_number].guest_name=username
+                num_nights=int(input('How many nights you want to book the room for: \n'))
+                ibill=num_nights*(self.rooms[room_number].price)
+                x=input('do you want to proceed with the payment {Y/N):  \n')
+                if x.lower()=='y':
+                    r=Payment(ibill,username)
+                    r.get_final_bill()
+                    print('Your room is booked successfully !!')
+                    self.rooms[room_number].number=room_number
+                    self.rooms[room_number].isbooked=True
+                    self.rooms[room_number].guest_name=username
             else:
                 print(f'room {room_number} is already booked')
         else:
