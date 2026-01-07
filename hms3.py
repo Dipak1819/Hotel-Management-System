@@ -10,14 +10,15 @@ from hotels import Hotel
 def main():
     x='*' * 10
     print(f'{x} welcome to the hotel management system. Please choose a option {x} \n')
-    print('1. Add rooms \n')
-    print('2. List all rooms \n')
-    print('3. Book a room \n')
-    print('4. Check out room \n')
-    print('5. exit \n')
     hm=Hotel('Sangrila')
     flag=True
     while flag:
+        print('\n1. Add rooms \n')
+        print('2. List all rooms \n')
+        print('3. Book a room \n')
+        print('4. Check out room \n')
+        print('5. Delete Room \n')
+        print('6. Exit')
         choice=int(input("enter your choice: "))
         if choice==1:
             room_num=int(input("enter the room number you want to add: "))
@@ -32,7 +33,10 @@ def main():
         elif choice==4:
             num2=int(input('enter the room number you want to check out: \n'))
             hm.check_out(num2)
-        elif choice==5: 
+        elif choice==5:
+            num3=int(input('enter the room number you want to delete: \n'))
+            hm.delete_rooms(num3)
+        elif choice==6: 
             flag=False
         else:
             print('please enter a valid option')
