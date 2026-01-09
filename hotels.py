@@ -145,6 +145,21 @@ class Hotel:
         if not flag:
             print("no room of given type found")
         return flag
+    
+    def search_by_price_range(self, min, max):
+        flag=False
+        for v in self.rooms.values():
+            if v.price>=min and v.price<=max:
+                print(v.get_room_info())
+                print(f"  Has Balcony: {v.hasbalcony}")
+                print(f"  Has Lounge: {v.haslounge}")
+                print(f" Has Bar: {v.hasbar}")
+                flag=True
+
+        if not flag:
+            print('room not found in the given price range')
+            return
+
         
 
             

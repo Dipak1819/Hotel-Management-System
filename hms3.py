@@ -19,6 +19,7 @@ def main():
         print('4. Check out room \n')
         print('5. Delete Room \n')
         print('6. Search Room by type (Standard/Deluxe/Suite): \n')
+        print('7. Search Room by Price Range: \n')
         print('7. Exit')
         choice=int(input("enter your choice: "))
         if choice==1:
@@ -40,7 +41,11 @@ def main():
         elif choice==6:
             x=input("enter the type of room you want to search: \n")
             hm.search_room_by_type(x)
-        elif choice==7: 
+        elif choice==7:
+            min1=int(input('enter the minimum price of the room: \n'))
+            max1=int(input('the maximum price of the room \n'))
+            hm.search_by_price_range(min1,max1)
+        elif choice==8: 
             flag=False
         else:
             print('please enter a valid option')
