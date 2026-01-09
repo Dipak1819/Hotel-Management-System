@@ -2,6 +2,19 @@ from rooms import StandardRoom,DeluxeRoom,SuiteRoom
 from payment import Payment
 import json
 
+def decorator_function(func1):
+    def wrapper_function(self,type1):
+        found=func1(self,type1)
+        if found:
+            for v in self.rooms.values():
+                if v.type==type1:
+                    print(f"  Balcony: {v.hasbalcony}")
+                    print(f"  Lounge:  {v.haslounge}")
+                    print(f"  Bar:     {v.hasbar}")
+        return found
+    return wrapper_function
+        
+
 class Hotel:
     def __init__(self,name):
         self.name=name
@@ -130,7 +143,8 @@ class Hotel:
         else:
             print('room doesnt exist in the database')
             return
-        
+
+    @decorator_function  
     def search_room_by_type(self, type1):
         flag= False
         for v in self.rooms.values():
@@ -140,4 +154,7 @@ class Hotel:
         
         if not flag:
             print("no room of given type found")
-            return 
+        return flag
+        
+
+            
