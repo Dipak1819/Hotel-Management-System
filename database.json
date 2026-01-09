@@ -3,8 +3,8 @@
         "room_number": 100,
         "room_type": "Standard",
         "room_price": 300,
-        "book status": false,
-        "guest": null,
+        "book status": true,
+        "guest": "DIpak",
         "has_lounge": "No",
         "type": "Standard"
     },
