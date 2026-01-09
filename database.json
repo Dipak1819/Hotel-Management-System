@@ -7,5 +7,14 @@
         "guest": null,
         "has_lounge": "No",
         "type": "Standard"
+    },
+    "101": {
+        "room_number": 101,
+        "room_type": "Suite",
+        "room_price": 700,
+        "book status": false,
+        "guest": null,
+        "has_lounge": "Yes",
+        "type": "Suite"
     }
 }
