@@ -16,15 +16,15 @@ class Hotel:
         
             for j, v in content.items():
                 i=int(j)
-                if content[i]['room_type']=='Standard':
+                if v['room_type']=='Standard':
                     self.rooms[i]=StandardRoom(
                         v['room_number']
                     )
-                elif content[i]['room_type']=='Deluxe':
+                elif v['room_type']=='Deluxe':
                     self.rooms[i]=DeluxeRoom(
                         v['room_number']
                     )
-                elif content[i]['room_type']=='Suite':
+                elif v['room_type']=='Suite':
                     self.rooms[i]=SuiteRoom(
                         v['room_number']
                     )
@@ -130,3 +130,14 @@ class Hotel:
         else:
             print('room doesnt exist in the database')
             return
+        
+    def search_room_by_type(self, type1):
+        flag= False
+        for v in self.rooms.values():
+            if v.type==type1:
+                print(v.get_room_info())
+                flag=True
+        
+        if not flag:
+            print("no room of given type found")
+            return 
