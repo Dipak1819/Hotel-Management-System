@@ -23,6 +23,3 @@ class Payment:
         print(f'initial bill :{self.initialbill}')
         print(f'tax_amount: {self.totaltax}')
         print(f'total bill: {self.finalbill}')
-
-
-

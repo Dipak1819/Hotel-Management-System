@@ -3,27 +3,27 @@
         "room_number": 100,
         "room_type": "Standard",
         "room_price": 300,
-        "book status": true,
-        "guest": "DIpak",
+        "bookings": [
+            {
+                "guest": "Rahul",
+                "checkin": "2026-01-20",
+                "checkout": "2026-01-25"
+            },
+            {
+                "guest": "dIpak",
+                "checkin": "2026-01-30",
+                "checkout": "2026-02-05"
+            }
+        ],
         "has_lounge": "No",
         "type": "Standard"
     },
     "101": {
         "room_number": 101,
-        "room_type": "Suite",
-        "room_price": 700,
-        "book status": false,
-        "guest": null,
+        "room_type": "Deluxe",
+        "room_price": 500,
+        "bookings": [],
         "has_lounge": "Yes",
-        "type": "Suite"
-    },
-    "104": {
-        "room_number": 104,
-        "room_type": "Standard",
-        "room_price": 300,
-        "book status": false,
-        "guest": null,
-        "has_lounge": "No",
-        "type": "Standard"
+        "type": "Deluxe"
     }
 }
