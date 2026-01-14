@@ -1,5 +1,6 @@
 from rooms import StandardRoom,DeluxeRoom,SuiteRoom
 from payment import Payment
+from datetime import datetime
 import json
 
 class Hotel:
@@ -28,10 +29,23 @@ class Hotel:
                     self.rooms[i]=SuiteRoom(
                         v['room_number']
                     )
-                self.rooms[i].isbooked=v['book status']
-                self.rooms[i].guest_name=v['guest']
+                
+                # Load bookings if they exist
+                if 'bookings' in v:
+                    for booking in v['bookings']:
+                        guest = booking['guest']
+                        checkin = datetime.strptime(booking['checkin'], '%Y-%m-%d').date()
+                        checkout = datetime.strptime(booking['checkout'], '%Y-%m-%d').date()
+                        self.rooms[i].bookings.append((guest, checkin, checkout))
+                
+                # Update current status
+                self.rooms[i].update_current_status()
         
-        except json.JSONDecodeError:  # ← Add this!
+        except FileNotFoundError:
+            print("No existing database found, starting fresh")
+            self.rooms = {}
+        
+        except json.JSONDecodeError:
             print("Empty or corrupted file, starting fresh")
             self.rooms = {}
 
@@ -52,12 +66,20 @@ class Hotel:
                 else:
                     room_type="Suite"
 
+                # Convert bookings to JSON-serializable format
+                bookings_list = []
+                for guest, checkin, checkout in v.bookings:
+                    bookings_list.append({
+                        'guest': guest,
+                        'checkin': checkin.strftime('%Y-%m-%d'),
+                        'checkout': checkout.strftime('%Y-%m-%d')
+                    })
+
                 data[i]={
                     "room_number":i,
                     "room_type":room_type,
                     "room_price":v.price,
-                    "book status":v.isbooked,
-                    "guest":v.guest_name,
+                    "bookings": bookings_list,
                     "has_lounge":v.haslounge,
                     "type":v.type
                 }
@@ -84,36 +106,106 @@ class Hotel:
         self.save_file()
         print("room added successfully")
 
-    def book_rooms(self,room_number,username):
-        if room_number in self.rooms:
-            if self.rooms[room_number].isbooked==False: 
-                num_nights=int(input('How many nights you want to book the room for: \n'))
-                ibill=num_nights*(self.rooms[room_number].price)
-                x=input('do you want to proceed with the payment {Y/N):  \n')
-                if x.lower()=='y':
-                    r=Payment(ibill,username)
-                    r.get_final_bill()
-                    print('Your room is booked successfully !!')
-                    self.rooms[room_number].number=room_number
-                    self.rooms[room_number].isbooked=True
-                    self.rooms[room_number].guest_name=username
-                    self.save_file()
-            else:
-                print(f'room {room_number} is already booked')
-        else:
-            print("please enter a valid room number")
+    def book_rooms(self, room_number, username, indate, outdate):
+        """Book a room for specific dates"""
+        if room_number not in self.rooms:
+            print("No room exists for given room number")
+            return False
+        
+        try:
+            # Convert string dates to date objects
+            checkin_date = datetime.strptime(indate, '%Y-%m-%d').date()
+            checkout_date = datetime.strptime(outdate, '%Y-%m-%d').date()
+            
+            # Validate dates
+            if checkin_date >= checkout_date:
+                print("Check-out date must be after check-in date")
+                return False
+            
+            if checkin_date < datetime.now().date():
+                print("Cannot book for past dates")
+                return False
+            
+            # Check if room is available for these dates
+            if not self.rooms[room_number].is_available(checkin_date, checkout_date):
+                print(f"Room {room_number} is not available for the dates {indate} to {outdate}")
+                print("Conflicting bookings exist.")
+                return False
+            
+            # Add the booking
+            self.rooms[room_number].add_booking(username, checkin_date, checkout_date)
+            self.save_file()
+            print(f"Room {room_number} successfully booked for {username} from {indate} to {outdate}")
+            return True
+            
+        except ValueError as e:
+            print(f"Invalid date format. Please use YYYY-MM-DD format. Error: {e}")
+            return False
 
-    def check_out(self,room_number):
-        if room_number in self.rooms:
-            if self.rooms[room_number].isbooked==True:
-                self.rooms[room_number].isbooked=False
-                self.rooms[room_number].guest_name=None
-                print("room checked out successfully")
-                self.save_file()
-            else:
-                print("the room is not booked to check out")
-        else:
+    def check_out(self, room_number, guest_name=None):
+        """Check out from a room - removes current or specific booking"""
+        if room_number not in self.rooms:
             print(f'Please enter a valid room number')
+            return False
+        
+        room = self.rooms[room_number]
+        
+        if not room.bookings:
+            print("The room has no bookings to check out")
+            return False
+        
+        # If guest name provided, find and remove that specific booking
+        if guest_name:
+            today = datetime.now().date()
+            removed = False
+            for booking in room.bookings[:]:  # Create a copy to iterate
+                if booking[0] == guest_name and booking[1] <= today <= booking[2]:
+                    room.remove_booking(guest_name, booking[1])
+                    removed = True
+                    break
+            
+            if removed:
+                print(f"Checked out {guest_name} from room {room_number} successfully")
+                self.save_file()
+                return True
+            else:
+                print(f"No active booking found for {guest_name} in room {room_number}")
+                return False
+        
+        # If no guest name, remove the current active booking
+        today = datetime.now().date()
+        for booking in room.bookings[:]:
+            guest, checkin, checkout = booking
+            if checkin <= today < checkout:
+                room.remove_booking(guest, checkin)
+                print(f"Checked out {guest} from room {room_number} successfully")
+                self.save_file()
+                return True
+        
+        print("No active booking found for check-out")
+        return False
+
+    def view_room_bookings(self, room_number):
+        """View all bookings for a specific room"""
+        if room_number not in self.rooms:
+            print(f'Room {room_number} does not exist')
+            return
+        
+        room = self.rooms[room_number]
+        print(f"\n--- Bookings for Room {room_number} ({room.type}) ---")
+        
+        if not room.bookings:
+            print("No bookings for this room")
+            return
+        
+        today = datetime.now().date()
+        for i, (guest, checkin, checkout) in enumerate(room.bookings, 1):
+            status = "ACTIVE" if checkin <= today < checkout else "UPCOMING" if checkin > today else "PAST"
+            print(f"{i}. Guest: {guest}")
+            print(f"   Check-in:  {checkin}")
+            print(f"   Check-out: {checkout}")
+            print(f"   Status: {status}")
+            print()
 
     def list_rooms(self):
         if self.rooms:
@@ -160,6 +252,3 @@ class Hotel:
             print('room not found in the given price range')
             return
 
-        
-
-            

@@ -6,6 +6,7 @@
 
 #now we build the front end of the rooms
 from hotels import Hotel
+from datetime import datetime
 
 def main():
     x='*' * 10
@@ -20,8 +21,15 @@ def main():
         print('5. Delete Room \n')
         print('6. Search Room by type (Standard/Deluxe/Suite): \n')
         print('7. Search Room by Price Range: \n')
-        print('7. Exit')
-        choice=int(input("enter your choice: "))
+        print('8. View Room Bookings \n')
+        print('9. Exit')
+        
+        try:
+            choice=int(input("enter your choice: "))
+        except ValueError:
+            print('Please enter a valid number')
+            continue
+            
         if choice==1:
             room_num=int(input("enter the room number you want to add: "))
             rtype=input('enter the type of the room (standard/deluxe/suite):  ')
@@ -30,8 +38,11 @@ def main():
             hm.list_rooms()
         elif choice==3:
             num=int(input('enter the room number you want to book: \n'))
-            gname=input('enter hte guest name who want to book the room: \n')
-            hm.book_rooms(num,gname)
+            gname=input('enter the guest name who want to book the room: \n')
+            print('Date format: YYYY-MM-DD (e.g., 2026-01-15)')
+            indate=input('enter the check in date: ')
+            outdate=input('enter the checkout date: ')
+            hm.book_rooms(num,gname,indate,outdate)
         elif choice==4:
             num2=int(input('enter the room number you want to check out: \n'))
             hm.check_out(num2)
@@ -45,7 +56,10 @@ def main():
             min1=int(input('enter the minimum price of the room: \n'))
             max1=int(input('the maximum price of the room \n'))
             hm.search_by_price_range(min1,max1)
-        elif choice==8: 
+        elif choice==8:
+            num4=int(input('enter the room number to view bookings: \n'))
+            hm.view_room_bookings(num4)
+        elif choice==9: 
             flag=False
         else:
             print('please enter a valid option')
